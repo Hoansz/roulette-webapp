@@ -62,7 +62,6 @@ for row_start in range(1, 37, 3):
         with col:
             if st.button(f"{num}", key=f"btn_{num}"):
                 add_number(num)
-            st.markdown(f"<div style='text-align: center; color: {color}; font-weight: bold;'>{num}</div>", unsafe_allow_html=True)
 
 # --- Wahrscheinlich nächste Zahlen ---
 st.subheader("Wahrscheinlich nächste Zahlen")
