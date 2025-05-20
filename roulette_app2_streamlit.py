@@ -20,8 +20,8 @@ if "history" not in st.session_state:
 START_PROB = 1 / 37
 MAX_HISTORY = 100
 
-def calculate_probabilities():
-    counts = {i: st.session_state.history.count(i) for i in range(37)}
+def calculate_probabilities(history):
+    counts = {i: history.count(i) for i in range(37)}
     weights = {i: 1 / (counts[i] + 1)**2 for i in range(37)}
     total_weight = sum(weights.values())
     return {i: weights[i] / total_weight for i in range(37)}
@@ -37,9 +37,7 @@ def remove_last_instance(n):
             del st.session_state.history[i]
             break
 
-probs = calculate_probabilities()
-
-# --- Roulette-Tisch Darstellung ---
+# --- UI Buttons für Roulette Tisch ---
 st.subheader("Roulette-Tisch")
 
 # Zeile 1: 0 zentriert
@@ -58,6 +56,9 @@ for row_start in range(1, 37, 3):
                 if st.button(str(num), key=f"btn_{num}"):
                     add_number(num)
 
+# --- Wahrscheinlichkeiten berechnen ---
+probs = calculate_probabilities(st.session_state.history)
+
 # --- Wahrscheinlich nächste Zahlen ---
 st.subheader("Wahrscheinlich nächste Zahlen")
 top = sorted(probs.items(), key=lambda x: x[1], reverse=True)[:15]
@@ -75,8 +76,9 @@ for i, (num, p) in enumerate(top):
 # --- Letzte Zahlen anzeigen ---
 st.subheader("Letzte Zahlen")
 if st.session_state.history:
-    cols = st.columns(min(len(st.session_state.history), 20))
-    for i, num in enumerate(st.session_state.history):
+    reversed_history = list(reversed(st.session_state.history))
+    cols = st.columns(min(len(reversed_history), 20))
+    for i, num in enumerate(reversed_history):
         color = number_colors[num]
         with cols[i % 20]:
             if st.button(str(num), key=f"hist_{i}"):
