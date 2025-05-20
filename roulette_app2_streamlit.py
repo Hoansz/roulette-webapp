@@ -11,31 +11,6 @@ number_colors = {
 }
 
 st.set_page_config(layout="wide")
-st.markdown("""
-    <style>
-        .grid-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .grid-row {
-            display: flex;
-            gap: 8px;
-            margin: 4px 0;
-        }
-        .number-button {
-            width: 60px;
-            height: 60px;
-            font-size: 16px;
-            font-weight: bold;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            background-color: white;
-            text-align: center;
-        }
-    </style>
-""", unsafe_allow_html=True)
 
 st.title("🎰 Roulette Quoten")
 
@@ -66,31 +41,22 @@ probs = calculate_probabilities()
 
 # --- Roulette-Tisch Darstellung ---
 st.subheader("Roulette-Tisch")
-st.markdown("<div class='grid-container'>", unsafe_allow_html=True)
 
 # Zeile 1: 0 zentriert
-st.markdown("<div class='grid-row' style='justify-content: center;'>", unsafe_allow_html=True)
-col_zero = st.columns(1)
-with col_zero[0]:
-    if st.button("0", key="btn_0"):
-        add_number(0)
-    st.markdown("<div class='number-button'>0</div>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+if st.button("0", key="btn_0"):
+    add_number(0)
 st.markdown("</div>", unsafe_allow_html=True)
 
 # Weitere Zeilen: je 3 Zahlen nebeneinander
 for row_start in range(1, 37, 3):
-    st.markdown("<div class='grid-row'>", unsafe_allow_html=True)
-    row_cols = st.columns(3)
+    cols = st.columns(3)
     for offset in range(3):
         num = row_start + offset
         if num <= 36:
-            with row_cols[offset]:
+            with cols[offset]:
                 if st.button(str(num), key=f"btn_{num}"):
                     add_number(num)
-                st.markdown(f"<div class='number-button'>{num}</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Wahrscheinlich nächste Zahlen ---
 st.subheader("Wahrscheinlich nächste Zahlen")
@@ -100,14 +66,8 @@ for i, (num, p) in enumerate(top):
     color = number_colors[num]
     with top_cols[i % 5]:
         st.markdown(f"""
-            <div class='number-button' style='background-color:{color}; color:white;'>
-                <b>{num}</b><br><small>{p*100:.1f}%</small>
+            <div style='text-align: center;'>
+                <b style='color:{color}; font-size: 20px'>{num}</b><br>
+                <small>{p*100:.1f}%</small>
             </div>
         """, unsafe_allow_html=True)
-
-# --- Verlauf anzeigen ---
-st.subheader("Letzte Zahlen")
-reversed_hist = list(reversed(st.session_state.history))
-rows = [reversed_hist[i:i+20] for i in range(0, len(reversed_hist), 20)]
-for row in rows:
-    st.write(" ".join(str(n) for n in row))
