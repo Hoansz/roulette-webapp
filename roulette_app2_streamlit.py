@@ -13,35 +13,29 @@ number_colors = {
 st.set_page_config(layout="wide")
 st.markdown("""
     <style>
-        .grid-wrapper {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .column {
+        .grid-container {
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin-bottom: 20px;
         }
-        .row {
+        .grid-row {
             display: flex;
-            margin: 2px 0;
+            gap: 8px;
+            margin: 4px 0;
         }
         .number-box {
-            width: 50px;
-            height: 50px;
-            margin: 2px;
-            text-align: center;
-            line-height: 1.2;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             font-size: 14px;
             font-weight: bold;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 6px;
             background-color: white;
-            cursor: pointer;
-        }
-        .number-box:hover {
-            background-color: #f0f0f0;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -73,18 +67,20 @@ def remove_last_instance(n):
 
 probs = calculate_probabilities()
 
-# --- Layout mit 0 oben und darunter Reihen mit 3er-Gruppen ---
+# --- Roulette-Tisch Darstellung ---
 st.subheader("Roulette-Tisch")
-st.markdown("<div class='grid-wrapper'><div class='column'>", unsafe_allow_html=True)
+st.markdown("<div class='grid-container'>", unsafe_allow_html=True)
 
-# Null anzeigen
+# Zeile 1: 0 zentriert
+st.markdown("<div class='grid-row' style='justify-content: center;'>", unsafe_allow_html=True)
 if st.button("0", key="btn_0"):
     add_number(0)
 st.markdown(f"<div class='number-box'>0<br><small>{probs[0]*100:.1f}%</small></div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
-# Zahlen 1–36 in Gruppen zu je 3 pro Zeile (wie auf Roulettetisch)
+# Weitere Zeilen: je 3 Zahlen nebeneinander
 for row_start in range(1, 37, 3):
-    st.markdown("<div class='row'>", unsafe_allow_html=True)
+    st.markdown("<div class='grid-row'>", unsafe_allow_html=True)
     for offset in range(3):
         num = row_start + offset
         if num <= 36:
@@ -93,7 +89,7 @@ for row_start in range(1, 37, 3):
             st.markdown(f"<div class='number-box'>{num}<br><small>{probs[num]*100:.1f}%</small></div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("</div></div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Wahrscheinlich nächste Zahlen ---
 st.subheader("Wahrscheinlich nächste Zahlen")
