@@ -46,11 +46,7 @@ st.subheader("Roulette-Tisch")
 
 # Zeile 1: 0 zentriert
 st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-color_0 = number_colors[0]
-st.markdown(f"""
-    <button style='background-color:{color_0}; color:white; font-weight:bold; font-size:16px; padding:10px; border:none; border-radius:4px;' onclick="document.querySelector('[name=btn_0]').click();">0</button>
-""", unsafe_allow_html=True)
-if st.button("", key="btn_0"):
+if st.button("0", key="btn_0"):
     add_number(0)
 st.markdown("</div>", unsafe_allow_html=True)
 
@@ -62,11 +58,9 @@ for row_start in range(1, 37, 3):
         if num <= 36:
             with cols[offset]:
                 color = number_colors[num]
-                st.markdown(f"""
-                    <button style='background-color:{color}; color:white; font-weight:bold; font-size:16px; width:100%; padding:10px; border:none; border-radius:4px;' onclick="document.querySelector('[name=btn_{num}]').click();">{num}</button>
-                """, unsafe_allow_html=True)
-                if st.button("", key=f"btn_{num}"):
+                if st.button(str(num), key=f"btn_{num}"):
                     add_number(num)
+                st.markdown(f"<div style='text-align: center; color: {color}; font-weight: bold;'>{num}</div>", unsafe_allow_html=True)
 
 # --- Wahrscheinlichkeiten berechnen ---
 probs = calculate_probabilities(st.session_state.history)
@@ -79,8 +73,8 @@ for i, (num, p) in enumerate(top):
     color = number_colors[num]
     with top_cols[i % 5]:
         st.markdown(f"""
-            <div style='text-align: center; border: 1px solid #ccc; border-radius: 5px; padding: 8px; margin: 4px; background-color:{color}; color:white;'>
-                <b style='font-size: 18px'>{num}</b><br>
+            <div style='text-align: center;'>
+                <b style='color:{color}; font-size: 18px'>{num}</b><br>
                 <small>{p*100:.1f}%</small>
             </div>
         """, unsafe_allow_html=True)
@@ -95,3 +89,4 @@ if st.session_state.history:
         with cols[i % 20]:
             if st.button(f"{num}", key=f"hist_{len(st.session_state.history) - 1 - i}"):
                 remove_specific_instance(len(st.session_state.history) - 1 - i)
+            st.markdown(f"<div style='text-align: center; color: {color}; font-weight: bold;'>{num}</div>", unsafe_allow_html=True)
