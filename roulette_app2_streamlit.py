@@ -53,16 +53,16 @@ if st.button("0", key="btn_0"):
     add_number(0)
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Weitere Zeilen: je 3 Zahlen nebeneinander
+# Weitere Zeilen: 3 Zahlen pro Zeile von links nach rechts
 for row_start in range(1, 37, 3):
-    cols = st.columns(3)
-    for offset in range(3):
-        num = row_start + offset
-        if num <= 36:
-            with cols[offset]:
-                color = number_colors[num]
-                if st.button(f"{num}", key=f"btn_{num}"):
-                    add_number(num)
+    row_numbers = [n for n in range(row_start, min(row_start + 3, 37))]
+    cols = st.columns(len(row_numbers))
+    for col, num in zip(cols, row_numbers):
+        color = number_colors[num]
+        with col:
+            if st.button(f"{num}", key=f"btn_{num}"):
+                add_number(num)
+            st.markdown(f"<div style='text-align: center; color: {color}; font-weight: bold;'>{num}</div>", unsafe_allow_html=True)
 
 # --- Wahrscheinlich nächste Zahlen ---
 st.subheader("Wahrscheinlich nächste Zahlen")
