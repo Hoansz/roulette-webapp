@@ -41,6 +41,9 @@ def remove_specific_instance(index):
     if 0 <= index < len(st.session_state.history):
         del st.session_state.history[index]
 
+# --- Wahrscheinlichkeiten berechnen ---
+probs = calculate_probabilities(st.session_state.history)
+
 # --- UI Buttons für Roulette Tisch ---
 st.subheader("Roulette-Tisch")
 
@@ -58,12 +61,11 @@ for row_start in range(1, 37, 3):
         if num <= 36:
             with cols[offset]:
                 color = number_colors[num]
-                if st.button(str(num), key=f"btn_{num}"):
+                st.markdown(f"<div style='text-align: center;'>", unsafe_allow_html=True)
+                if st.button(f"{num}", key=f"btn_{num}"):
                     add_number(num)
-                st.markdown(f"<div style='text-align: center; color: {color}; font-weight: bold;'>{num}</div>", unsafe_allow_html=True)
-
-# --- Wahrscheinlichkeiten berechnen ---
-probs = calculate_probabilities(st.session_state.history)
+                st.markdown(f"<span style='color: {color}; font-weight: bold;'>{num}</span>", unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Wahrscheinlich nächste Zahlen ---
 st.subheader("Wahrscheinlich nächste Zahlen")
