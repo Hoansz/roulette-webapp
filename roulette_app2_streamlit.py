@@ -81,9 +81,12 @@ for i, (num, p) in enumerate(top):
 st.subheader("Letzte Zahlen")
 if st.session_state.history:
     reversed_history = list(reversed(st.session_state.history))
-    cols = st.columns(min(len(reversed_history), 20))
-    for i, num in enumerate(reversed_history):
-        color = number_colors[num]
-        with cols[i % 20]:
-            if st.button(f"{num}", key=f"hist_{len(st.session_state.history) - 1 - i}"):
-                remove_specific_instance(len(st.session_state.history) - 1 - i)
+    max_per_row = 20
+    rows = [reversed_history[i:i+max_per_row] for i in range(0, len(reversed_history), max_per_row)]
+    for row_index, row in enumerate(rows):
+        cols = st.columns(len(row))
+        for i, num in enumerate(row):
+            color = number_colors[num]
+            with cols[i]:
+                if st.button(f"{num}", key=f"hist_{len(st.session_state.history) - 1 - (row_index * max_per_row + i)}"):
+                    remove_specific_instance(len(st.session_state.history) - 1 - (row_index * max_per_row + i))
