@@ -61,11 +61,8 @@ for row_start in range(1, 37, 3):
         if num <= 36:
             with cols[offset]:
                 color = number_colors[num]
-                st.markdown(f"<div style='text-align: center;'>", unsafe_allow_html=True)
                 if st.button(f"{num}", key=f"btn_{num}"):
                     add_number(num)
-                st.markdown(f"<span style='color: {color}; font-weight: bold;'>{num}</span>", unsafe_allow_html=True)
-                st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Wahrscheinlich nächste Zahlen ---
 st.subheader("Wahrscheinlich nächste Zahlen")
@@ -91,4 +88,3 @@ if st.session_state.history:
         with cols[i % 20]:
             if st.button(f"{num}", key=f"hist_{len(st.session_state.history) - 1 - i}"):
                 remove_specific_instance(len(st.session_state.history) - 1 - i)
-            st.markdown(f"<div style='text-align: center; color: {color}; font-weight: bold;'>{num}</div>", unsafe_allow_html=True)
