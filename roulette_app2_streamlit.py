@@ -13,35 +13,35 @@ number_colors = {
 st.set_page_config(layout="wide")
 st.markdown("""
     <style>
-        .number-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 50px);
-            gap: 4px;
+        .grid-wrapper {
+            display: flex;
             justify-content: center;
+            margin-bottom: 20px;
+        }
+        .column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .row {
+            display: flex;
+            margin: 2px 0;
         }
         .number-box {
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 6px;
-            text-align: center;
-            font-size: 14px;
-            cursor: pointer;
-            background-color: white;
-        }
-        .number-box:hover {
-            background-color: #eee;
-        }
-        .history-box {
-            display: inline-block;
-            width: 32px;
-            height: 32px;
-            line-height: 32px;
+            width: 50px;
+            height: 50px;
             margin: 2px;
             text-align: center;
-            border-radius: 4px;
-            font-size: 13px;
+            line-height: 1.2;
+            font-size: 14px;
             font-weight: bold;
-            color: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+        }
+        .number-box:hover {
+            background-color: #f0f0f0;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -73,25 +73,29 @@ def remove_last_instance(n):
 
 probs = calculate_probabilities()
 
-st.subheader("Roulette Tisch")
+# --- Layout mit 0 oben und darunter Reihen mit 3er-Gruppen ---
+st.subheader("Roulette-Tisch")
+st.markdown("<div class='grid-wrapper'><div class='column'>", unsafe_allow_html=True)
 
-# 0 in der Mitte über den restlichen Zahlen
-st.markdown("<div style='text-align:center'><b>0</b></div>", unsafe_allow_html=True)
+# Null anzeigen
 if st.button("0", key="btn_0"):
     add_number(0)
-st.caption(f"{probs[0]*100:.1f}%")
+st.markdown(f"<div class='number-box'>0<br><small>{probs[0]*100:.1f}%</small></div>", unsafe_allow_html=True)
 
-# Zahlen 1–36 in 3 Spalten von unten nach oben
-st.markdown("<div class='number-grid'>", unsafe_allow_html=True)
-for row in range(12):
-    for col in range(3):
-        num = row * 3 + col + 1
+# Zahlen 1–36 in Gruppen zu je 3 pro Zeile (wie auf Roulettetisch)
+for row_start in range(1, 37, 3):
+    st.markdown("<div class='row'>", unsafe_allow_html=True)
+    for offset in range(3):
+        num = row_start + offset
         if num <= 36:
             if st.button(str(num), key=f"btn_{num}"):
                 add_number(num)
             st.markdown(f"<div class='number-box'>{num}<br><small>{probs[num]*100:.1f}%</small></div>", unsafe_allow_html=True)
-st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
+st.markdown("</div></div>", unsafe_allow_html=True)
+
+# --- Wahrscheinlich nächste Zahlen ---
 st.subheader("Wahrscheinlich nächste Zahlen")
 top = sorted(probs.items(), key=lambda x: x[1], reverse=True)[:15]
 top_cols = st.columns(5)
@@ -104,11 +108,9 @@ for i, (num, p) in enumerate(top):
             </div>
         """, unsafe_allow_html=True)
 
+# --- Verlauf anzeigen ---
 st.subheader("Letzte Zahlen")
 reversed_hist = list(reversed(st.session_state.history))
 rows = [reversed_hist[i:i+20] for i in range(0, len(reversed_hist), 20)]
 for row in rows:
-    for num in row:
-        color = number_colors[num]
-        st.markdown(f"<span class='history-box' style='background-color:{color};'>{num}</span>", unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.write(" ".join(str(n) for n in row))
