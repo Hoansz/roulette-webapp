@@ -32,7 +32,7 @@ def add_number(n):
         st.session_state.history = st.session_state.history[-MAX_HISTORY:]
 
 def remove_last_instance(n):
-    for i in reversed(range(len(st.session_state.history))):
+    for i in range(len(st.session_state.history)):
         if st.session_state.history[i] == n:
             del st.session_state.history[i]
             break
@@ -66,8 +66,18 @@ for i, (num, p) in enumerate(top):
     color = number_colors[num]
     with top_cols[i % 5]:
         st.markdown(f"""
-            <div style='text-align: center;'>
-                <b style='color:{color}; font-size: 20px'>{num}</b><br>
+            <div style='text-align: center; border: 1px solid #ccc; border-radius: 5px; padding: 8px; margin: 4px;'>
+                <b style='color:{color}; font-size: 18px'>{num}</b><br>
                 <small>{p*100:.1f}%</small>
             </div>
         """, unsafe_allow_html=True)
+
+# --- Letzte Zahlen anzeigen ---
+st.subheader("Letzte Zahlen")
+if st.session_state.history:
+    cols = st.columns(min(len(st.session_state.history), 20))
+    for i, num in enumerate(st.session_state.history):
+        color = number_colors[num]
+        with cols[i % 20]:
+            if st.button(str(num), key=f"hist_{i}"):
+                remove_last_instance(num)
