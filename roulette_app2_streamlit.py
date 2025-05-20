@@ -1,4 +1,5 @@
 import streamlit as st
+from PIL import Image
 
 # Farben wie im Roulette
 number_colors = {
@@ -11,6 +12,12 @@ number_colors = {
 }
 
 st.set_page_config(layout="wide")
+
+# Reset-Funktion
+col1, col2 = st.columns([10, 1])
+with col2:
+    if st.button("🗑️", key="reset"):
+        st.session_state.history = []
 
 st.title("🎰 Roulette Quoten")
 
@@ -31,11 +38,9 @@ def add_number(n):
     if len(st.session_state.history) > MAX_HISTORY:
         st.session_state.history = st.session_state.history[-MAX_HISTORY:]
 
-def remove_last_instance(n):
-    for i in range(len(st.session_state.history)):
-        if st.session_state.history[i] == n:
-            del st.session_state.history[i]
-            break
+def remove_specific_instance(index):
+    if 0 <= index < len(st.session_state.history):
+        del st.session_state.history[index]
 
 # --- UI Buttons für Roulette Tisch ---
 st.subheader("Roulette-Tisch")
@@ -81,5 +86,5 @@ if st.session_state.history:
     for i, num in enumerate(reversed_history):
         color = number_colors[num]
         with cols[i % 20]:
-            if st.button(str(num), key=f"hist_{i}"):
-                remove_last_instance(num)
+            if st.button(str(num), key=f"hist_{len(st.session_state.history) - 1 - i}"):
+                remove_specific_instance(len(st.session_state.history) - 1 - i)
