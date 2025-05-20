@@ -84,9 +84,10 @@ if st.session_state.history:
     max_per_row = 20
     rows = [reversed_history[i:i+max_per_row] for i in range(0, len(reversed_history), max_per_row)]
     for row_index, row in enumerate(rows):
-        cols = st.columns(len(row))
+        st.markdown("<div style='display: flex; gap: 2px;'>", unsafe_allow_html=True)
         for i, num in enumerate(row):
             color = number_colors[num]
-            with cols[i]:
-                if st.button(f"{num}", key=f"hist_{len(st.session_state.history) - 1 - (row_index * max_per_row + i)}"):
-                    remove_specific_instance(len(st.session_state.history) - 1 - (row_index * max_per_row + i))
+            idx = len(st.session_state.history) - 1 - (row_index * max_per_row + i)
+            if st.button(f"{num}", key=f"hist_{idx}"):
+                remove_specific_instance(idx)
+        st.markdown("</div>", unsafe_allow_html=True)
